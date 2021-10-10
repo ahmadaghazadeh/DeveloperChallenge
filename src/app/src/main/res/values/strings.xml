@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Developer Challenge</string>
+    <string name="game_over">Game Over</string>
+    <string name="you_win">You Win</string>
+</resources>
