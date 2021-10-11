@@ -12,7 +12,6 @@ import com.threatfabric.developerchallenge.BR;
 import com.threatfabric.developerchallenge.R;
 import com.threatfabric.developerchallenge.base.activity.ActivityBase;
 import com.threatfabric.developerchallenge.databinding.ActivityActionBinding;
-import com.threatfabric.developerchallenge.databinding.ActivityMainBinding;
 import com.threatfabric.developerchallenge.ui.GameAction;
 
 import javax.inject.Inject;

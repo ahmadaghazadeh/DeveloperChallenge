@@ -2,7 +2,6 @@ package com.threatfabric.developerchallenge.ui.actionctivity;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.threatfabric.developerchallenge.R;
 import com.threatfabric.developerchallenge.base.activity.ViewModelBase;
 
 import javax.inject.Inject;
