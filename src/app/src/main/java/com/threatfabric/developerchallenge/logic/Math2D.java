@@ -1,5 +1,7 @@
 package com.threatfabric.developerchallenge.logic;
 
+import android.graphics.Point;
+
 public class  Math2D {
     public static Double distancePointLine(float pointX,float pointY,
             float x1,float y1,float x2,float y2){
@@ -28,4 +30,20 @@ public class  Math2D {
             double point2y) {
         return Math.sqrt((point2y - point1Y) * (point2y - point1Y) + (point2X - point1X) * (point2X - point1X));
     }
+
+    public static Point move(int sourceX, int sourceY,
+                             int targetX, int targetY, int speed){
+        float deltaX = sourceX - targetX;
+        float deltaY = sourceY - targetY;
+        double angle = Math.atan2( deltaY, deltaX );
+        int newX = targetX+(int)( speed * Math.cos( angle ));
+        int newY = targetY+(int)( speed * Math.sin( angle ));
+        return new Point(newX,newY);
+    }
+
+
+
+
+
+
 }

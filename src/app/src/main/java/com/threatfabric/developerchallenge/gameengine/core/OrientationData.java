@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 public class OrientationData implements SensorEventListener {
     private final SensorManager manager;
@@ -14,6 +15,7 @@ public class OrientationData implements SensorEventListener {
 
     private float[] accelOutput;
     private float[] magOutput;
+    private float[] gyroscopeOutput;
 
     private final float[] orientation = new float[3];
     private float[] startOrientation = null;
@@ -42,13 +44,13 @@ public class OrientationData implements SensorEventListener {
     public float getPitch(){
         if (!hasStartOrientationValue())
             return 0;
-        return getOrientation()[1]-getStartOrientation()[1];
+        return (getOrientation()[1]-getStartOrientation()[1]);
     }
 
     public float getRoll(){
         if (!hasStartOrientationValue())
             return 0;
-        return getOrientation()[2]-getStartOrientation()[2];
+        return (getOrientation()[2]-getStartOrientation()[2]);
     }
 
 
@@ -75,8 +77,9 @@ public class OrientationData implements SensorEventListener {
         else if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
             magOutput = event.values;
         else if(event.sensor.getType() == Sensor.TYPE_GYROSCOPE)
-            magOutput = event.values;
-        if(accelOutput != null && magOutput != null) {
+            gyroscopeOutput = event.values;
+        if(accelOutput != null && magOutput != null && gyroscopeOutput!=null) {
+            Log.e("Developer","G x:"+gyroscopeOutput[0]+" y:"+gyroscopeOutput[1]);
             float[] rotationMatrix= new float[9];
             float[] inclinationMatrix = new float[9];
             boolean success = SensorManager.getRotationMatrix(rotationMatrix, inclinationMatrix, accelOutput, magOutput);

@@ -6,7 +6,7 @@ import android.view.SurfaceHolder;
 import com.threatfabric.developerchallenge.gameengine.Constants;
 
 public class MainThread extends Thread{
-    public  static  final int MAX_FPS=30;
+    public  static  final int MAX_FPS=120;
     private double averageFPS;
     private final SurfaceHolder surfaceHolder;
     private final GameView gameView;

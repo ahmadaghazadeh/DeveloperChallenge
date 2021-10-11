@@ -5,12 +5,17 @@ import android.graphics.Paint;
 
 import com.threatfabric.developerchallenge.gameengine.core.IGameObject;
 import com.threatfabric.developerchallenge.logic.Circle;
+import com.threatfabric.developerchallenge.logic.Math2D;
+
+import java.util.List;
 
 public class Player implements IGameObject {
 
     private final Circle circle;
     private final Paint paint;
     private final int zIndex;
+
+
 
     public Player(Circle circle, int color, int zIndex){
         this.circle=circle;
@@ -39,6 +44,48 @@ public class Player implements IGameObject {
 
     }
 
+    public boolean wallDownCollide(List<IGameObject> walls){
+        for (IGameObject gameObject:walls) {
+            Wall wall=(Wall) gameObject;
+            int value= (int) (Math2D.distancePointLine(getX(),getY(),
+                    wall.getRect().left,wall.getRect().top,wall.getRect().right,wall.getRect().top)-getRadius());
+            if(value<=0)
+                return true;
+        }
+        return false;
+    }
+    public boolean wallTopCollide(List<IGameObject> walls){
+        for (IGameObject gameObject:walls) {
+            Wall wall=(Wall) gameObject;
+            int value= (int) (Math2D.distancePointLine(getX(),getY(),
+                    wall.getRect().left,wall.getRect().bottom,wall.getRect().right,wall.getRect().bottom)-getRadius());
+            if(value<=0)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean wallRightCollide(List<IGameObject> walls){
+        for (IGameObject gameObject:walls) {
+            Wall wall=(Wall) gameObject;
+            int value= (int) (Math2D.distancePointLine(getX(),getY(),
+                    wall.getRect().left,wall.getRect().top,wall.getRect().left,wall.getRect().bottom)-getRadius());
+            if(value<=0)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean wallLeftCollide(List<IGameObject> walls){
+        for (IGameObject gameObject:walls) {
+            Wall wall=(Wall) gameObject;
+            int value= (int) (Math2D.distancePointLine(getX(),getY(),
+                    wall.getRect().right,wall.getRect().top,wall.getRect().right,wall.getRect().bottom)-getRadius());
+            if(value<=0)
+                return true;
+        }
+        return false;
+    }
 
     public int getX(){
         return circle.getX();

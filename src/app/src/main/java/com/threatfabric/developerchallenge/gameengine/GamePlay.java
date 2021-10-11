@@ -20,7 +20,8 @@ public class GamePlay implements IOrientationListener, IGaveViewUpdate {
     private final IGameInteractive gameInteractive;
     private float xSpeed;
     private float ySpeed;
-    private final float speedFactor=500f;
+
+    private final float speedFactor=1500f;
     private Player player;
     private final List<IGameObject> walls=new LinkedList<>();
     private final List<IGameObject> blackHoles=new LinkedList<>();
@@ -66,7 +67,8 @@ public class GamePlay implements IOrientationListener, IGaveViewUpdate {
         int newX =(int)( (Math.abs(xSpeed*elapsedTime) > thresholdMovement ? xSpeed*elapsedTime : 0)+x);
         int newY =(int)(y-( Math.abs(ySpeed*elapsedTime) >thresholdMovement ? ySpeed*elapsedTime : 0));
 
-        Point surroundingObstaclePoint=getSurroundingObstaclePoint(x,y,newX,newY);
+
+        Point nextPoint=getSurroundingObstaclePoint(x,y,newX,newY);
 
         blackHolesCollide();
 
@@ -78,77 +80,46 @@ public class GamePlay implements IOrientationListener, IGaveViewUpdate {
             playerAnimation(winPoint, gameInteractive::onWin);
         }
         else {
-            player.update(surroundingObstaclePoint.x,surroundingObstaclePoint.y);
+            player.update(nextPoint.x,nextPoint.y);
         }
-
     }
 
-
     private Point getSurroundingObstaclePoint(int x,int y,int newX,int newY){
-        for (IGameObject gameObject:walls) {
-            Wall wall=((Wall)gameObject);
-            CollideLine collideLine =wall.playerCollide(player);
-            switch (collideLine.getCollideSide()){
-                case None:
-                    break;
-                case X:
-                    if(newX>x && wall.getRect().right>player.getX()){
-                        newX=wall.getRect().left-player.getRadius();
-                    }else if(newX<x && wall.getRect().left<player.getX()){
-                        newX=wall.getRect().right+player.getRadius();
-                    }
-
-                    break;
-                case Y:
-                    if(newY<y && wall.getRect().bottom<player.getX()){
-                        newY=wall.getRect().bottom+player.getRadius();
-                    }else if(newY>y && wall.getRect().top>player.getX() ){
-                        newY=wall.getRect().top-player.getRadius();
-                    }
-                    break;
-
+        boolean down=player.wallDownCollide(walls);
+        boolean top=player.wallTopCollide(walls);
+        boolean right=player.wallRightCollide(walls);
+        boolean left=player.wallLeftCollide(walls);
+        if(newY>y){
+            if(down){
+                newY=y;
             }
-            CollidePoint collidePoint= wall.playerCollideEdge(player);
-            if(collidePoint.getValue()<player.getRadius()){
-                if(newX>x ){
-                    newX=collidePoint.getPoint().x+player.getRadius();
-                }else if(newX<x){
-                    newX=collidePoint.getPoint().x-player.getRadius();
-                }
-                if(newY<y ){
-                    newY=collidePoint.getPoint().y-player.getRadius();
-                }else if(newY>y ){
-                    newY=collidePoint.getPoint().y+player.getRadius();
-                }
+        }else {
+            if(top){
+                newY=y;
             }
-            if(wall.getRect().contains(player.getX(),player.getY())){
-                if(newX>x ){
-                    newX=wall.getRect().left-player.getRadius();
-                }else if(newX<x){
-                    newX=wall.getRect().right+player.getRadius();
-                }
-                if(newY<y ){
-                    newY=wall.getRect().bottom+player.getRadius();
-                }else if(newY>y ){
-                    newY=wall.getRect().top-player.getRadius();
-                }
-            }
-
         }
+        if(newX>x){
+            if(right){
+                newX=x;
+            }
+        }else {
+            if(left){
+                newX=x;
+            }
+        }
+
         if(newX<0){
-            newX=Constants.SCREEN_WIDTH-Constants.WIDTH_WALL-player.getRadius();
+            newX=Constants.WIDTH_WALL+player.getRadius();
         }else if(newX>Constants.SCREEN_WIDTH)
         {
-            newX=Constants.SCREEN_WIDTH+Constants.WIDTH_WALL+player.getRadius();
+            newX=Constants.SCREEN_WIDTH-Constants.WIDTH_WALL-player.getRadius();
         }
 
         if(newY<0){
-            newY=Constants.SCREEN_HEIGHT-Constants.WIDTH_WALL-player.getRadius();
+            newY=Constants.WIDTH_WALL+player.getRadius();
         }else if(newY>Constants.SCREEN_HEIGHT) {
-            newY=Constants.SCREEN_HEIGHT+Constants.WIDTH_WALL+ player.getRadius();
+            newY=Constants.SCREEN_HEIGHT-Constants.WIDTH_WALL- player.getRadius();
         }
-
-        Log.e("Developer","After X:"+newX+ " Y:"+newY);
         return new Point(newX,newY);
     }
     private void blackHolesCollide(){
@@ -170,16 +141,10 @@ public class GamePlay implements IOrientationListener, IGaveViewUpdate {
             }
     }
 
-
-
     private void playerAnimation(Point target,Runnable runnable){
-        float deltaX = target.x - player.getX();
-        float deltaY = target.y - player.getY();
-        double angle = Math.atan2( deltaY, deltaX );
-        int newX = player.getX()+(int)( 5 * Math.cos( angle ));
-        int newY = player.getY()+(int)( 5 * Math.sin( angle ));
         player.setRadius(player.getRadius()-1);
-        player.update(newX,newY);
+        Point point=Math2D.move(player.getX(),player.getY(),target.x,target.y,5);
+        player.update(point.x,point.y);
         if((target.x==player.getX() && target.y==player.getY()) || player.getRadius()<15 ){
             if(!gameStopped){
                 gameStopped=true;
